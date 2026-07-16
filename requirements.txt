@@ -1,0 +1,6 @@
+flask
+flask-login
+groq
+psycopg2-binary
+gunicorn
+tavily-python

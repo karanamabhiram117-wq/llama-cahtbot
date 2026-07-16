@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Llama</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-0: #000000;
+            --bg-1: #0a0a0a;
+            --bg-2: #111111;
+            --bg-3: #191919;
+            --bg-4: #222222;
+            --border: rgba(255,255,255,0.06);
+            --border-light: rgba(255,255,255,0.1);
+            --text-0: #ffffff;
+            --text-1: #ededed;
+            --text-2: #888888;
+            --text-3: #555555;
+            --purple: #a78bfa;
+            --purple-dim: rgba(167,139,250,0.12);
+            --red: #f87171;
+            --red-dim: rgba(248,113,113,0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-0);
+            color: var(--text-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 380px;
+            padding: 40px 24px;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        .auth-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--text-0);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-logo-icon svg { width: 20px; height: 20px; color: #000; }
+        .auth-logo-name { font-size: 20px; font-weight: 600; color: var(--text-0); letter-spacing: -0.03em; }
+
+        .auth-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-0);
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: -0.03em;
+        }
+        .auth-subtitle {
+            font-size: 14px;
+            color: var(--text-3);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-2);
+            margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-0);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: rgba(167,139,250,0.3);
+            box-shadow: 0 0 0 3px rgba(167,139,250,0.08);
+        }
+        .form-input::placeholder { color: var(--text-3); }
+
+        .form-btn {
+            width: 100%;
+            padding: 11px;
+            background: var(--text-0);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .form-btn:hover { box-shadow: 0 4px 20px rgba(255,255,255,0.1); }
+        .form-btn:active { transform: scale(0.98); }
+
+        .flash {
+            background: var(--red-dim);
+            border: 1px solid rgba(248,113,113,0.2);
+            color: var(--red);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--text-3);
+        }
+        .auth-footer a {
+            color: var(--purple);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .auth-footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-logo">
+            <div class="auth-logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <span class="auth-logo-name">Llama</span>
+        </div>
+
+        <h1 class="auth-title">Create account</h1>
+        <p class="auth-subtitle">Get started with Llama</p>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/register">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input class="form-input" type="text" name="username" placeholder="Choose a username" required autofocus minlength="3">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input class="form-input" type="password" name="password" placeholder="At least 6 characters" required minlength="6">
+            </div>
+            <button class="form-btn" type="submit">Create account</button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a href="/login">Sign in</a>
+        </div>
+    </div>
+</body>
+</html>
