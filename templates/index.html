@@ -189,11 +189,12 @@
             .sidebar.open { left: 0; }
             .backdrop.show { display: block; }
             .menu-toggle { display: flex; }
-            .main { margin-left: 0; }
+            .main { margin-left: 0; min-width: 0; }
             .main::before { left: 0; }
+            .chat-scroll { overflow-x: hidden; }
             .topbar { padding: 0 16px 0 56px; height: 52px; }
             .topbar-title { font-size: 13px; }
-            .messages { padding: 24px 16px; }
+            .messages { padding: 24px 16px; max-width: 100%; }
             .message { gap: 12px; }
             .welcome h1 { font-size: 24px; }
             .cards { grid-template-columns: 1fr; max-width: 100%; }
@@ -202,9 +203,12 @@
             #prompt { font-size: 15px; padding: 6px 10px; }
             .sidebar-head { padding: 16px 12px 12px; }
             .sidebar-foot { padding: 12px; }
-            .body { font-size: 14px; }
-            .body pre { border-radius: 10px; }
-            .body pre code { padding: 12px; font-size: 12px; }
+            .content { min-width: 0; overflow-x: hidden; word-break: break-word; }
+            .body { font-size: 14px; overflow-x: auto; word-break: break-word; }
+            .body pre { border-radius: 10px; max-width: 100%; }
+            .body pre code { padding: 12px; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
+            .body table { display: block; overflow-x: auto; max-width: 100%; }
+            .body img { max-width: 100%; height: auto; }
         }
 
         @media (max-width: 480px) {
