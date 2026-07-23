@@ -30,8 +30,9 @@
             --glow: 0 0 80px rgba(167,139,250,0.06);
         }
 
+        html { overflow-x: hidden; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-0); color: var(--text-1); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-0); color: var(--text-1); display: flex; height: 100vh; overflow: hidden; width: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
         /* Sidebar */
         .sidebar { width: 260px; background: var(--bg-1); display: flex; flex-direction: column; border-right: 1px solid var(--border); position: relative; z-index: 10; }
@@ -185,37 +186,35 @@
         .backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9; }
 
         @media (max-width: 768px) {
-            .sidebar { position: fixed; left: -280px; top: 0; bottom: 0; z-index: 20; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            body { overflow-x: hidden; position: relative; }
+            .sidebar { position: fixed; left: -280px; top: 0; bottom: 0; z-index: 20; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 280px; }
             .sidebar.open { left: 0; }
             .backdrop.show { display: block; }
             .menu-toggle { display: flex; }
-            .main { margin-left: 0; min-width: 0; }
-            .main::before { left: 0; }
-            .chat-scroll { overflow-x: hidden; }
-            .topbar { padding: 0 16px 0 56px; height: 52px; }
+            .main { width: 100vw; max-width: 100vw; margin-left: 0; overflow-x: hidden; }
+            .main::before { left: 0; width: 100vw; }
+            .chat-scroll { overflow-x: hidden; width: 100%; }
+            .topbar { padding: 0 12px 0 52px; height: 48px; }
             .topbar-title { font-size: 13px; }
-            .messages { padding: 24px 16px; max-width: 100%; }
-            .message { gap: 12px; }
-            .welcome h1 { font-size: 24px; }
-            .cards { grid-template-columns: 1fr; max-width: 100%; }
-            .input-area { padding: 0 12px 16px; }
-            .input-box { border-radius: 12px; padding: 6px; }
-            #prompt { font-size: 15px; padding: 6px 10px; }
-            .sidebar-head { padding: 16px 12px 12px; }
+            .topbar-right { display: none; }
+            .messages { padding: 20px 16px; width: 100%; max-width: 100%; }
+            .message { gap: 10px; margin-bottom: 28px; }
+            .welcome { padding: 40px 20px; }
+            .welcome h1 { font-size: 22px; }
+            .welcome p { font-size: 14px; }
+            .cards { grid-template-columns: 1fr; gap: 10px; margin-top: 24px; }
+            .input-area { padding: 0 12px 12px; }
+            .input-box { border-radius: 12px; padding: 4px; }
+            #prompt { font-size: 15px; padding: 8px 10px; }
+            .sidebar-head { padding: 14px 12px; }
             .sidebar-foot { padding: 12px; }
             .content { min-width: 0; overflow-x: hidden; word-break: break-word; }
             .body { font-size: 14px; overflow-x: auto; word-break: break-word; }
-            .body pre { border-radius: 10px; max-width: 100%; }
+            .body pre { border-radius: 8px; margin: 12px 0; }
             .body pre code { padding: 12px; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
-            .body table { display: block; overflow-x: auto; max-width: 100%; }
+            .body table { display: block; overflow-x: auto; }
             .body img { max-width: 100%; height: auto; }
-        }
-
-        @media (max-width: 480px) {
-            .welcome { padding: 40px 16px; }
-            .welcome h1 { font-size: 20px; }
-            .welcome p { font-size: 14px; }
-            .message { margin-bottom: 28px; }
+            .model-info { display: none; }
         }
     </style>
 </head>
