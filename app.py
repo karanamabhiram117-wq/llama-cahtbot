@@ -1,5 +1,6 @@
 import os
 import secrets
+import threading
 import psycopg2
 import psycopg2.extras
 from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
@@ -309,7 +310,7 @@ def generate():
             conversation = "\n".join(
                 [f"{m['role']}: {m['content']}" for m in messages[1:]]
             ) + f"\nassistant: {reply}"
-            extract_and_store_memory(current_user.id, conversation)
+            threading.Thread(target=extract_and_store_memory, args=(current_user.id, conversation)).start()
 
         return jsonify({"response": reply})
 
