@@ -182,7 +182,7 @@ def extract_and_store_memory(user_id, conversation_text):
         pass
 
 
-MODEL = "llama-3.1-8b-instant"
+MODEL = "openai/gpt-oss-120b"
 
 
 @app.route("/")
