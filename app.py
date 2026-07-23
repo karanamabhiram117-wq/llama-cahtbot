@@ -197,6 +197,7 @@ def generate():
         prompt = data.get("prompt", "")
         max_tokens = data.get("max_tokens", 1024)
         use_web_search = data.get("use_web_search", False)
+        chat_id = data.get("chat_id")
 
         system_content = "You are a helpful assistant."
 
@@ -215,10 +216,21 @@ def generate():
                 f"Web Search Results:\n{context}"
             )
 
-        messages = [
-            {"role": "system", "content": system_content},
-            {"role": "user", "content": prompt}
-        ]
+        messages = [{"role": "system", "content": system_content}]
+
+        if chat_id:
+            conn = get_db()
+            cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            cur.execute(
+                "SELECT role, content FROM messages WHERE chat_id = %s ORDER BY created_at ASC",
+                (chat_id,)
+            )
+            for row in cur.fetchall():
+                messages.append({"role": row["role"], "content": row["content"]})
+            cur.close()
+            conn.close()
+
+        messages.append({"role": "user", "content": prompt})
 
         response = client.chat.completions.create(
             model=MODEL,

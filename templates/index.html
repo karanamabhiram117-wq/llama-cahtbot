@@ -410,7 +410,7 @@
                 const res = await fetch("/generate", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt, max_tokens: 1024, use_web_search: useWebSearch })
+                    body: JSON.stringify({ prompt, max_tokens: 1024, use_web_search: useWebSearch, chat_id: currentChatId })
                 });
                 const data = await res.json();
                 removeTyping();
