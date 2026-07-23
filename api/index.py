@@ -51,6 +51,16 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS user_memory (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            key TEXT NOT NULL,
+            value TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, key)
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -108,6 +118,52 @@ def get_tavily_client():
     if not api_key:
         return None
     return TavilyClient(api_key=api_key)
+
+
+def load_user_memories(user_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT key, value FROM user_memory WHERE user_id = ?", (user_id,))
+    rows = cur.fetchall()
+    conn.close()
+    if not rows:
+        return ""
+    return "Known facts about the user: " + "; ".join(
+        [f"{key}: {value}" for key, value in rows]
+    )
+
+
+def extract_and_store_memory(user_id, conversation_text):
+    client = get_client()
+    if not client:
+        return
+    try:
+        resp = client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": "Extract personal facts about the user from this conversation. "
+                 "Return ONLY a JSON object with key-value pairs. "
+                 "Example: {\"name\": \"Alice\", \"likes\": \"Python\"}. "
+                 "Return {} if no facts found."},
+                {"role": "user", "content": f"Conversation:\n{conversation_text}\n\nExtract facts:"}
+            ],
+            max_tokens=200,
+            temperature=0.1,
+        )
+        import json
+        facts = json.loads(resp.choices[0].message.content.strip())
+        if facts:
+            conn = get_db()
+            for key, value in facts.items():
+                conn.execute(
+                    "INSERT INTO user_memory (user_id, key, value) VALUES (?, ?, ?) "
+                    "ON CONFLICT(user_id, key) DO UPDATE SET value = excluded.value",
+                    (user_id, key, str(value))
+                )
+            conn.commit()
+            conn.close()
+    except Exception:
+        pass
 
 
 MODEL = "llama-3.1-8b-instant"
@@ -188,6 +244,10 @@ def generate():
 
         system_content = "You are a helpful assistant."
 
+        memories = load_user_memories(current_user.id)
+        if memories:
+            system_content += f"\n\n{memories}"
+
         if use_web_search:
             tavily = get_tavily_client()
             if not tavily:
@@ -226,7 +286,15 @@ def generate():
             top_p=0.9,
         )
 
-        return jsonify({"response": response.choices[0].message.content})
+        reply = response.choices[0].message.content
+
+        if chat_id:
+            conversation = "\n".join(
+                [f"{m['role']}: {m['content']}" for m in messages[1:]]
+            ) + f"\nassistant: {reply}"
+            extract_and_store_memory(current_user.id, conversation)
+
+        return jsonify({"response": reply})
 
     except Exception as e:
         return jsonify({"response": f"Error: {str(e)}"})
